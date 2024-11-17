@@ -1,0 +1,54 @@
+*{
+    margin: 0;
+}
+#agregarTarea{
+    margin-top: 20px;
+}
+#buscarTarea{
+    margin-top: 50px;
+}
+/* Estilos generales del botón */
+.btnEliminar, .btnEditar{
+    width: 100px;
+    height: 50px;
+    color: #007bff; /* Color de texto azul */
+    border: 1px solid #007bff; /* Borde del mismo color */
+    background-color: transparent; /* Fondo transparente */
+    padding: 10px 20px; /* Espaciado interno */
+    font-size: 15px; /* Tamaño del texto */
+    border-radius: 5px; /* Borde redondeado */
+    cursor: pointer; /* Icono de puntero */
+    text-align: center; /* Centrar texto */
+    display: inline-block; /* Asegura que el botón mantenga el formato */
+    margin: 4px;
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; /* Transiciones */
+}
+/* Estilos para el efecto hover */
+.btnEliminar:hover, .btnEditar:hover {
+    color: #fff; /* Cambia el color del texto a blanco */
+    background-color: #007bff; /* Fondo azul */
+    border-color: #007bff; /* Borde azul */
+}
+table{
+    width: 70rem;  /* Ancho fijo para toda la tabla */
+    table-layout: fixed;  /* Distribuye las columnas de manera uniforme según el ancho asignado */
+    border-collapse: collapse;  /* Elimina el espacio entre bordes */
+}
+.fila{
+    display: flex;
+    justify-content: left;
+    align-items: center; 
+    font-weight: bold;  
+    border: 2px solid black;
+    width: 70rem;
+    height: auto;   
+}
+.table-cell{    
+    width: 50rem;
+    word-wrap: break-word; 
+    white-space: normal; 
+    text-align: center;
+    margin-right: 30px; 
+}
+
+
