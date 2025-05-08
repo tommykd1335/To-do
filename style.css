@@ -29,7 +29,9 @@
     background-color: #007bff; /* Fondo azul */
     border-color: #007bff; /* Borde azul */
 }
-table{
+
+table{ 
+    padding-top: 30px; /* Espacio superior */
     width: 70rem;  /* Ancho fijo para toda la tabla */
     table-layout: fixed;  /* Distribuye las columnas de manera uniforme según el ancho asignado */
     border-collapse: collapse;  /* Elimina el espacio entre bordes */
