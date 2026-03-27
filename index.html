@@ -4,50 +4,300 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- estilos -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_new.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <title>Lista de tareas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>TechTask Pro - Gestión Financiera de Trabajos</title>
 </head>
 <body>
-    <div class="container text-center">  
-        <div class="row" id="agregarTarea">
-            <div class="col-8">
-                <h1>Lista de tarea</h1>
-                <div class="row">
-                    <div class="col-10">
-                        <div class="form-floating">
-                            <textarea class="form-control" placeholder="Agrega una tarea" id="textarea2" style="height: 100px"></textarea>
-                            <label for="textarea">Agrega una tarea</label>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">TechTask Pro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#" style="transition: all 0.3s ease;">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#metricas" style="transition: all 0.3s ease;">Métricas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#agregarTrabajo" style="transition: all 0.3s ease;">Nuevo Trabajo</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link" id="verHistorial" style="transition: all 0.3s ease;"><i class="fas fa-history"></i> Historial</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">  
+        <div class="row" id="agregarTrabajo">
+            <div class="col-12">
+                <h1 style="margin-bottom: 30px;">Registro de Trabajos</h1>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Detalles del Trabajo</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <textarea class="form-control" placeholder="Descripción del trabajo" id="descripcionTrabajo" style="height: 80px;"></textarea>
+                                    <label for="descripcionTrabajo">Descripción del Trabajo</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Fecha</span>
+                                    <input type="date" class="form-control" id="fechaTrabajo">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Categoría</span>
+                                    <select class="form-select" id="categoriaTrabajo">
+                                        <option value="Instalación" selected>Instalación</option>
+                                        <option value="Reparación">Reparación</option>
+                                        <option value="Mantenimiento">Mantenimiento</option>
+                                        <option value="Soporte">Soporte</option>
+                                        <option value="Consultoría">Consultoría</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Ingresos</h6>
+                                <div id="listaIngresos">
+                                    <!-- Ingresos dinámicos aquí -->
+                                </div>
+                                <button class="btn btn-success btn-sm mt-2" id="agregarIngreso"><i class="fas fa-plus"></i> Agregar Ingreso</button>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Gastos</h6>
+                                <div id="listaGastos">
+                                    <!-- Gastos dinámicos aquí -->
+                                </div>
+                                <button class="btn btn-danger btn-sm mt-2" id="agregarGasto"><i class="fas fa-plus"></i> Agregar Gasto</button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button class="btn btn-primary" id="guardarTrabajo"><i class="fas fa-save me-2"></i>Guardar Trabajo</button>
                         </div>
                     </div>
-                    <div class="col-2">
-                        <button class="btn btn-outline-primary" id="agregar">Agregar</button>
-                    </div> 
                 </div>
             </div>
-            <div class="col-4" id="buscarTarea">
-                <div class="row">
-                    <div class="col-10">
-                        <input class="form-control" type="text" placeholder="Buscar una tarea" id="buscarTexto">
-                    </div>
-                    <div class="col-2">
-                        <button class="btn btn-outline-primary" id="buscar">Buscar</button>
+            
+            <div class="row mt-4" id="metricas">
+                <div class="col-lg-2 col-md-4 col-6 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #10b981;">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="fas fa-plus-circle" style="color: #10b981;"></i> Ingresos</h6>
+                            <p class="card-text" id="ingresosDiarios" style="color: #10b981; font-weight: bold; font-size: 18px;">$0.00</p>
+                            <small class="text-muted">Hoy</small>
+                        </div>
                     </div>
                 </div>
-            </div>                
-            <table>
-                <thead>
-                    <tr class="fila">
-                        <th class="table-cell">Tarea</th>  
-                        <th></th> 
-                    </tr>
-                </thead>
-                <tbody id="lista">
-                </tbody>
-            </table>         
+                <div class="col-lg-2 col-md-4 col-6 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #10b981;">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="fas fa-plus-circle" style="color: #10b981;"></i> Ingresos</h6>
+                            <p class="card-text" id="ingresosSemanales" style="color: #10b981; font-weight: bold; font-size: 18px;">$0.00</p>
+                            <small class="text-muted">Esta semana</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #10b981;">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="fas fa-plus-circle" style="color: #10b981;"></i> Ingresos</h6>
+                            <p class="card-text" id="ingresosMensuales" style="color: #10b981; font-weight: bold; font-size: 18px;">$0.00</p>
+                            <small class="text-muted">Este mes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #ef4444;">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="fas fa-minus-circle" style="color: #ef4444;"></i> Gastos</h6>
+                            <p class="card-text" id="gastosDiarios" style="color: #ef4444; font-weight: bold; font-size: 18px;">$0.00</p>
+                            <small class="text-muted">Hoy</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #ef4444;">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="fas fa-minus-circle" style="color: #ef4444;"></i> Gastos</h6>
+                            <p class="card-text" id="gastosSemanales" style="color: #ef4444; font-weight: bold; font-size: 18px;">$0.00</p>
+                            <small class="text-muted">Esta semana</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #ef4444;">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="fas fa-minus-circle" style="color: #ef4444;"></i> Gastos</h6>
+                            <p class="card-text" id="gastosMensuales" style="color: #ef4444; font-weight: bold; font-size: 18px;">$0.00</p>
+                            <small class="text-muted">Este mes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-12 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #3b82f6;">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-equals" style="color: #3b82f6;"></i> Ganancia Neta</h5>
+                            <p class="card-text" id="gananciaDiaria" style="color: #3b82f6; font-weight: bold; font-size: 24px;">$0.00</p>
+                            <small class="text-muted">Hoy</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-12 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #3b82f6;">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-equals" style="color: #3b82f6;"></i> Ganancia Neta</h5>
+                            <p class="card-text" id="gananciaSemanal" style="color: #3b82f6; font-weight: bold; font-size: 24px;">$0.00</p>
+                            <small class="text-muted">Esta semana</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-12 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #3b82f6;">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-equals" style="color: #3b82f6;"></i> Ganancia Neta</h5>
+                            <p class="card-text" id="gananciaMensual" style="color: #3b82f6; font-weight: bold; font-size: 24px;">$0.00</p>
+                            <small class="text-muted">Este mes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-12 mb-3">
+                    <div class="card text-center" style="border-left: 4px solid #f59e0b;">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-receipt" style="color: #f59e0b;"></i> Trabajos</h5>
+                            <p class="card-text" id="totalTrabajos" style="color: #f59e0b; font-weight: bold; font-size: 28px;">0</p>
+                            <small class="text-muted">Total</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="buscador">
+                <div class="search-wrapper">
+                    <input class="form-control" type="text" placeholder="🔍 Buscar trabajo, categoría, fecha..." id="buscarTexto">
+                    <button class="btn btn-outline-danger" id="limpiarBusqueda"><i class="fas fa-times"></i> Limpiar</button>
+                </div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Trabajo</th>
+                            <th>Fecha</th>
+                            <th>Ingresos</th>
+                            <th>Gastos</th>
+                            <th>Ganancia</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaTrabajos">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Historial -->
+    <div class="modal fade" id="modalHistorial" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Historial de Transacciones</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="historialContenido">
+                        <!-- Historial aquí -->
+                    </div>
+                    <div class="text-center mt-3">
+                        <button class="btn btn-primary" id="exportarPDF"><i class="fas fa-download me-2"></i>Exportar a PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Trabajo -->
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Trabajo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="editDescripcion" style="height: 80px;"></textarea>
+                                <label for="editDescripcion">Descripción del Trabajo</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">Fecha</span>
+                                <input type="date" class="form-control" id="editFecha">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">Categoría</span>
+                                <select class="form-select" id="editCategoria">
+                                    <option value="Instalación">Instalación</option>
+                                    <option value="Reparación">Reparación</option>
+                                    <option value="Mantenimiento">Mantenimiento</option>
+                                    <option value="Soporte">Soporte</option>
+                                    <option value="Consultoría">Consultoría</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Ingresos</h6>
+                            <div id="editListaIngresos"></div>
+                            <button class="btn btn-success btn-sm mt-2" id="editAgregarIngreso"><i class="fas fa-plus"></i> Agregar Ingreso</button>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Gastos</h6>
+                            <div id="editListaGastos"></div>
+                            <button class="btn btn-danger btn-sm mt-2" id="editAgregarGasto"><i class="fas fa-plus"></i> Agregar Gasto</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarEdicion">Guardar Cambios</button>
+                </div>
+            </div>
         </div>
     </div>   
-    <script src="App.js"></script>
+    <footer class="text-center mt-5 py-3 bg-light">
+        <p class="mb-0">&copy; 2026 TechTask Pro. Desarrollado con ❤️ para gestión financiera eficiente.</p>
+    </footer>
+    <script src="App_new.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

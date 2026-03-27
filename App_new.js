@@ -1,30 +1,75 @@
-// Elementos del DOM
-const descripcionTrabajo = document.getElementById('descripcionTrabajo')
-const fechaTrabajo = document.getElementById('fechaTrabajo')
-const categoriaTrabajo = document.getElementById('categoriaTrabajo')
-const listaIngresos = document.getElementById('listaIngresos')
-const listaGastos = document.getElementById('listaGastos')
-const agregarIngreso = document.getElementById('agregarIngreso')
-const agregarGasto = document.getElementById('agregarGasto')
-const guardarTrabajo = document.getElementById('guardarTrabajo')
-const limpiarBusqueda = document.getElementById('limpiarBusqueda')
-const modalHistorial = new bootstrap.Modal(document.getElementById('modalHistorial'))
-const modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'))
-const editDescripcion = document.getElementById('editDescripcion')
-const editFecha = document.getElementById('editFecha')
-const editCategoria = document.getElementById('editCategoria')
-const editListaIngresos = document.getElementById('editListaIngresos')
-const editListaGastos = document.getElementById('editListaGastos')
-const editAgregarIngreso = document.getElementById('editAgregarIngreso')
-const editAgregarGasto = document.getElementById('editAgregarGasto')
-const exportarPDF = document.getElementById('exportarPDF')
+// ============================================
+// GESTIÓN DE TRABAJOS - APP FINANCIERA
+// ============================================
 
+// Variables globales
 let listaTrabajosData = []
 let trabajoEditando = null
-let ingresosTemp = []
-let gastosTemp = []
 
-// Funciones de almacenamiento
+// Elementos del DOM (inicializados en DOMContentLoaded)
+let descripcionTrabajo
+let fechaTrabajo
+let categoriaTrabajo
+let listaIngresos
+let listaGastos
+let agregarIngresoBtn
+let agregarGastoBtn
+let guardarTrabajoBtn
+let listaTrabajos
+let textoBuscar
+let limpiarBusquedaBtn
+let verHistorialBtn
+let editDescripcion
+let editFecha
+let editCategoria
+let editListaIngresos
+let editListaGastos
+let editAgregarIngresoBtn
+let editAgregarGastoBtn
+let guardarEdicionBtn
+let exportarPDFBtn
+
+// Modales
+let modalHistorial
+let modalEditar
+
+// ============================================
+// FUNCIONES DE NOTIFICACIONES
+// ============================================
+function mostrarNotificacion(mensaje, tipo = 'success') {
+    const notifContainer = document.getElementById('notificacionesContainer') || crearContenedorNotificaciones()
+    
+    const notif = document.createElement('div')
+    notif.className = `alert-notificacion alert-${tipo}`
+    notif.innerHTML = `
+        <div class="notif-contenido">
+            <i class="fas fa-check-circle"></i>
+            <span>${mensaje}</span>
+        </div>
+    `
+    notifContainer.appendChild(notif)
+    
+    setTimeout(() => {
+        notif.classList.add('mostrar')
+    }, 50)
+    
+    setTimeout(() => {
+        notif.classList.remove('mostrar')
+        setTimeout(() => notif.remove(), 300)
+    }, 4000)
+}
+
+function crearContenedorNotificaciones() {
+    const container = document.createElement('div')
+    container.id = 'notificacionesContainer'
+    container.className = 'notificaciones-container'
+    document.body.insertBefore(container, document.body.firstChild)
+    return container
+}
+
+// ============================================
+// FUNCIONES DE ALMACENAMIENTO
+// ============================================
 function cargarDesdeStorage() {
     const data = localStorage.getItem('listaTrabajosNegocio')
     listaTrabajosData = data ? JSON.parse(data) : []
@@ -106,7 +151,7 @@ function guardarTrabajoNuevo() {
     const categoria = categoriaTrabajo.value
 
     if (!descripcion) {
-        alert('Por favor, ingresa la descripción del trabajo.')
+        mostrarNotificacion('Por favor, ingresa la descripción del trabajo', 'error')
         descripcionTrabajo.focus()
         return
     }
@@ -136,7 +181,7 @@ function guardarTrabajoNuevo() {
     })
 
     if (ingresos.length === 0 && gastos.length === 0) {
-        alert('Agrega al menos un ingreso o gasto para el trabajo.')
+        mostrarNotificacion('Agrega al menos un ingreso o gasto', 'error')
         return
     }
 
@@ -154,7 +199,7 @@ function guardarTrabajoNuevo() {
     guardarEnStorage()
     mostrarTrabajos(filteredTrabajos())
     limpiarFormulario()
-    alert('Trabajo guardado exitosamente!')
+    mostrarNotificacion('Trabajo guardado exitosamente', 'success')
 }
 
 // Limpiar formulario
@@ -197,7 +242,7 @@ function guardarEdicionTrabajo() {
     const categoria = editCategoria.value
 
     if (!descripcion) {
-        alert('Por favor, ingresa la descripción del trabajo.')
+        mostrarNotificacion('Por favor, ingresa la descripción del trabajo', 'error')
         editDescripcion.focus()
         return
     }
@@ -227,7 +272,7 @@ function guardarEdicionTrabajo() {
     })
 
     if (ingresos.length === 0 && gastos.length === 0) {
-        alert('Agrega al menos un ingreso o gasto para el trabajo.')
+        mostrarNotificacion('Agrega al menos un ingreso o gasto', 'error')
         return
     }
 
@@ -243,16 +288,16 @@ function guardarEdicionTrabajo() {
     guardarEnStorage()
     mostrarTrabajos(filteredTrabajos())
     modalEditar.hide()
-    alert('Trabajo editado exitosamente!')
+    mostrarNotificacion('Trabajo actualizado exitosamente', 'success')
 }
 
 // Eliminar trabajo
 function eliminarTrabajo(index) {
-    if (confirm('¿Estás seguro de que quieres eliminar este trabajo? Esta acción no se puede deshacer.')) {
+    if (confirm('¿Estás seguro de que quieres eliminar este trabajo?')) {
         listaTrabajosData.splice(index, 1)
         guardarEnStorage()
         mostrarTrabajos(filteredTrabajos())
-        alert('Trabajo eliminado.')
+        mostrarNotificacion('Trabajo eliminado', 'success')
     }
 }
 
@@ -260,6 +305,19 @@ function eliminarTrabajo(index) {
 function limpiarBusquedaTrabajos() {
     textoBuscar.value = ''
     mostrarTrabajos(filteredTrabajos())
+}
+
+// Filtrar trabajos
+function filteredTrabajos() {
+    const filtro = textoBuscar.value.trim().toLowerCase()
+    if (!filtro) return listaTrabajosData
+    return listaTrabajosData.filter(t =>
+        t.descripcion.toLowerCase().includes(filtro) ||
+        t.categoria.toLowerCase().includes(filtro) ||
+        t.fecha.includes(filtro) ||
+        t.ingresos.some(i => i.descripcion.toLowerCase().includes(filtro)) ||
+        t.gastos.some(g => g.descripcion.toLowerCase().includes(filtro))
+    )
 }
 
 // Actualizar métricas
@@ -290,16 +348,16 @@ function actualizarMetricas(trabajos) {
     const mensuales = calcularTotales(primerDiaMesStr)
 
     // Actualizar DOM
-    document.getElementById('ingresosDiarios').innerText = `$${diarios.ingresos.toFixed(2)}`
-    document.getElementById('ingresosSemanales').innerText = `$${semanales.ingresos.toFixed(2)}`
-    document.getElementById('ingresosMensuales').innerText = `$${mensuales.ingresos.toFixed(2)}`
-    document.getElementById('gastosDiarios').innerText = `$${diarios.gastos.toFixed(2)}`
-    document.getElementById('gastosSemanales').innerText = `$${semanales.gastos.toFixed(2)}`
-    document.getElementById('gastosMensuales').innerText = `$${mensuales.gastos.toFixed(2)}`
-    document.getElementById('gananciaDiaria').innerText = `$${(diarios.ingresos - diarios.gastos).toFixed(2)}`
-    document.getElementById('gananciaSemanal').innerText = `$${(semanales.ingresos - semanales.gastos).toFixed(2)}`
-    document.getElementById('gananciaMensual').innerText = `$${(mensuales.ingresos - mensuales.gastos).toFixed(2)}`
-    document.getElementById('totalTrabajos').innerText = trabajos.length
+    document.getElementById('ingresosDiarios').textContent = `$${diarios.ingresos.toFixed(2)}`
+    document.getElementById('ingresosSemanales').textContent = `$${semanales.ingresos.toFixed(2)}`
+    document.getElementById('ingresosMensuales').textContent = `$${mensuales.ingresos.toFixed(2)}`
+    document.getElementById('gastosDiarios').textContent = `$${diarios.gastos.toFixed(2)}`
+    document.getElementById('gastosSemanales').textContent = `$${semanales.gastos.toFixed(2)}`
+    document.getElementById('gastosMensuales').textContent = `$${mensuales.gastos.toFixed(2)}`
+    document.getElementById('gananciaDiaria').textContent = `$${(diarios.ingresos - diarios.gastos).toFixed(2)}`
+    document.getElementById('gananciaSemanal').textContent = `$${(semanales.ingresos - semanales.gastos).toFixed(2)}`
+    document.getElementById('gananciaMensual').textContent = `$${(mensuales.ingresos - mensuales.gastos).toFixed(2)}`
+    document.getElementById('totalTrabajos').textContent = trabajos.length
 }
 
 // Mostrar historial
@@ -355,21 +413,89 @@ function exportarHistorialPDF() {
     html2pdf().set(opt).from(element).save()
 }
 
-// Event listeners
-agregarIngreso.addEventListener('click', () => listaIngresos.appendChild(crearCampoIngreso()))
-agregarGasto.addEventListener('click', () => listaGastos.appendChild(crearCampoGasto()))
-guardarTrabajo.addEventListener('click', guardarTrabajoNuevo)
-textoBuscar.addEventListener('input', () => mostrarTrabajos(filteredTrabajos()))
-limpiarBusqueda.addEventListener('click', limpiarBusquedaTrabajos)
-verHistorial.addEventListener('click', mostrarHistorial)
-editAgregarIngreso.addEventListener('click', () => editListaIngresos.appendChild(crearCampoIngreso()))
-editAgregarGasto.addEventListener('click', () => editListaGastos.appendChild(crearCampoGasto()))
-guardarEdicion.addEventListener('click', guardarEdicionTrabajo)
-exportarPDF.addEventListener('click', exportarHistorialPDF)
-
-// Inicializar
-cargarDesdeStorage()
-
-// Hacer funciones globales para onclick
-window.editarTrabajo = editarTrabajo
-window.eliminarTrabajo = eliminarTrabajo
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Capturar elementos del DOM
+    descripcionTrabajo = document.getElementById('descripcionTrabajo')
+    fechaTrabajo = document.getElementById('fechaTrabajo')
+    categoriaTrabajo = document.getElementById('categoriaTrabajo')
+    listaIngresos = document.getElementById('listaIngresos')
+    listaGastos = document.getElementById('listaGastos')
+    agregarIngresoBtn = document.getElementById('agregarIngreso')
+    agregarGastoBtn = document.getElementById('agregarGasto')
+    guardarTrabajoBtn = document.getElementById('guardarTrabajo')
+    
+    listaTrabajos = document.getElementById('listaTrabajos')
+    textoBuscar = document.getElementById('buscarTexto')
+    limpiarBusquedaBtn = document.getElementById('limpiarBusqueda')
+    verHistorialBtn = document.getElementById('verHistorial')
+    
+    editDescripcion = document.getElementById('editDescripcion')
+    editFecha = document.getElementById('editFecha')
+    editCategoria = document.getElementById('editCategoria')
+    editListaIngresos = document.getElementById('editListaIngresos')
+    editListaGastos = document.getElementById('editListaGastos')
+    editAgregarIngresoBtn = document.getElementById('editAgregarIngreso')
+    editAgregarGastoBtn = document.getElementById('editAgregarGasto')
+    guardarEdicionBtn = document.getElementById('guardarEdicion')
+    
+    exportarPDFBtn = document.getElementById('exportarPDF')
+    
+    // Inicializar modales
+    modalHistorial = new bootstrap.Modal(document.getElementById('modalHistorial'))
+    modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'))
+    
+    // ============================================
+    // EVENT LISTENERS - FORMULARIO PRINCIPAL
+    // ============================================
+    agregarIngresoBtn.addEventListener('click', function() {
+        listaIngresos.appendChild(crearCampoIngreso())
+    })
+    
+    agregarGastoBtn.addEventListener('click', function() {
+        listaGastos.appendChild(crearCampoGasto())
+    })
+    
+    guardarTrabajoBtn.addEventListener('click', guardarTrabajoNuevo)
+    
+    // ============================================
+    // EVENT LISTENERS - BÚSQUEDA
+    // ============================================
+    textoBuscar.addEventListener('input', function() {
+        mostrarTrabajos(filteredTrabajos())
+    })
+    
+    limpiarBusquedaBtn.addEventListener('click', limpiarBusquedaTrabajos)
+    
+    // ============================================
+    // EVENT LISTENERS - HISTORIAL
+    // ============================================
+    verHistorialBtn.addEventListener('click', mostrarHistorial)
+    exportarPDFBtn.addEventListener('click', exportarHistorialPDF)
+    
+    // ============================================
+    // EVENT LISTENERS - MODAL DE EDICIÓN
+    // ============================================
+    editAgregarIngresoBtn.addEventListener('click', function() {
+        editListaIngresos.appendChild(crearCampoIngreso())
+    })
+    
+    editAgregarGastoBtn.addEventListener('click', function() {
+        editListaGastos.appendChild(crearCampoGasto())
+    })
+    
+    guardarEdicionBtn.addEventListener('click', guardarEdicionTrabajo)
+    
+    // ============================================
+    // FUNCIONES GLOBALES
+    // ============================================
+    window.editarTrabajo = editarTrabajo
+    window.eliminarTrabajo = eliminarTrabajo
+    
+    // ============================================
+    // CARGAR DATOS
+    // ============================================
+    cargarDesdeStorage()
+})
